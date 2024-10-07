@@ -33,6 +33,9 @@ https://github.com/remy/nodemon#nodemon
 
 nodemon 진행하면서 발생한 마이크로소프트 파워쉘 보안문서
 https://learn.microsoft.com/ko-kr/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.4
+
+oracleDB 문서
+https://oracle.github.io/node-oracledb/
 --------
 
 const express = require('express');   express 모듈을 가져온다 (expreses.js)
