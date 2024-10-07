@@ -1,11 +1,17 @@
 'use strict';
 
+require("dotenv").config({ path: ".env"})
 const express = require('express');
 const https = require('https');
 const http = require('http');
 const app = express();
 const oracledb = require('oracledb')
-const dbConfig = require('./DB/dbConfig')
+// const dbConfig = require('./DB/dbConfig')
+const dbConfig = {
+    user: process.env.NODE_ORACLEDB_USER,
+    password: process.env.NODE_ORACLEDB_PASSWORD,
+    connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING
+};
 
 app.use(express.json());
 app.use(express.static('src'));
@@ -16,7 +22,9 @@ app.get('/', function(req, res){
 
 app.listen(3000, async function(){
     console.log("Hello, World!");
-    connectToDB();
+    (async () => {
+        await connectToDB();
+    })();
 });
 
 async function connectToDB() {
@@ -28,10 +36,18 @@ async function connectToDB() {
         const sql = `SELECT * FROM TEST`;
         const result = await conn.execute(sql);
         console.log(result.rows);
-
-        await conn.close();
+        
     } catch (err) {
         console.error('DB 연결 또는 쿼리 실행 중 오류 발생:', err);
+    } finally {
+        // 연결이 성공적으로 생성된 경우에만 종료합니다.
+        if (conn) {
+            try {
+                await conn.close();
+            } catch (err) {
+                console.error('연결 종료 중 오류 발생:', err);
+            }
+        }
     }
 }
 
