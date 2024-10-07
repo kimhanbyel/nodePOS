@@ -1,17 +1,39 @@
+'use strict';
+
 const express = require('express');
 const https = require('https');
 const http = require('http');
 const app = express();
+const oracledb = require('oracledb')
+const dbConfig = require('./DB/dbConfig')
 
 app.use(express.json());
+app.use(express.static('src'));
 
 app.get('/', function(req, res){ 
     res.sendFile(__dirname + '/src/index.html');
 })
 
-app.listen(3000, function(){
+app.listen(3000, async function(){
     console.log("Hello, World!");
+    connectToDB();
 });
+
+async function connectToDB() {
+    let conn;
+    try {
+        conn = await oracledb.getConnection(dbConfig);
+        console.log("Oracle DB 연결 성공!!");
+
+        const sql = `SELECT * FROM TEST`;
+        const result = await conn.execute(sql);
+        console.log(result.rows);
+
+        await conn.close();
+    } catch (err) {
+        console.error('DB 연결 또는 쿼리 실행 중 오류 발생:', err);
+    }
+}
 
 /*
 --------
